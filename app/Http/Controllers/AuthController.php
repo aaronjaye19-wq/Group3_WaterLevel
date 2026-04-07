@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
 
 class AuthController extends Controller
 {
@@ -243,13 +243,13 @@ class AuthController extends Controller
         $qrCodeData = 'otpauth://totp/WaterLevel:' . $user->email . '?secret=' . $secret . '&issuer=WaterLevel';
         
         $qrCode = new QrCode($qrCodeData);
-        $writer = new PngWriter();
+        $writer = new SvgWriter();
         $result = $writer->write($qrCode);
-        $qrCodeImage = base64_encode($result->getString());
+        $qrCodeSvg = $result->getString();
         
         return view('auth.setup-mfa', [
             'secret' => $secret,
-            'qrCode' => 'data:image/png;base64,' . $qrCodeImage,
+            'qrCode' => 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg),
         ]);
     }
 
