@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckAdminRole
+class CheckUserRole
 {
     /**
      * Handle an incoming request.
@@ -20,9 +20,9 @@ class CheckAdminRole
             return redirect('/login');
         }
 
-        // If user is not admin, return 403 Forbidden
-        if (!auth()->user()->is_admin) {
-            abort(403, 'Unauthorized access. You do not have permission to access the admin dashboard.');
+        // If user is admin, they should not access user dashboard - return 403
+        if (auth()->user()->is_admin) {
+            abort(403, 'Unauthorized access. Admins cannot access the user dashboard.');
         }
 
         return $next($request);

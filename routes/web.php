@@ -8,6 +8,11 @@ use App\Http\Controllers\AdminController;
 // Add this line at the top — this is the "import"
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
+// Root route - redirect to login
+Route::get('/', function () {
+    return redirect('/login');
+});
+
 // Authentication Routes
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
@@ -35,8 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/mfa/disable', [AuthController::class, 'disableMfa'])->name('mfa.disable');
 });
 
-// Dashboard page (Protected)
-Route::view('/dashboard', 'dashboard')->middleware('auth')->name('dashboard');
+// Dashboard page (Protected - Users only)
+Route::view('/dashboard', 'dashboard')->middleware(['auth', 'user'])->name('dashboard');
 
 // Admin Routes
 Route::middleware(['auth', 'admin'])->group(function () {

@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 
 class AuthController extends Controller
 {
@@ -236,7 +238,19 @@ class AuthController extends Controller
         // Generate new secret
         $secret = base64_encode(random_bytes(32));
         
-        return view('auth.setup-mfa', ['secret' => $secret]);
+        // Generate QR code for TOTP
+        // Format: otpauth://totp/[issuer]:[account]?secret=[secret]&issuer=[issuer]
+        $qrCodeData = 'otpauth://totp/WaterLevel:' . $user->email . '?secret=' . $secret . '&issuer=WaterLevel';
+        
+        $qrCode = new QrCode($qrCodeData);
+        $writer = new SvgWriter();
+        $result = $writer->write($qrCode);
+        $qrCodeSvg = $result->getString();
+        
+        return view('auth.setup-mfa', [
+            'secret' => $secret,
+            'qrCode' => 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg),
+        ]);
     }
 
     /**
