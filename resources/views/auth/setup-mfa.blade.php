@@ -161,11 +161,14 @@
         </div>
 
         <div class="step">
-            <div class="step-title">Step 2: Scan QR Code or Enter Secret</div>
+            <div class="step-title">Step 2: Scan QR Code</div>
             <div class="step-content">
                 <p>Open your authenticator app and scan this QR code:</p>
+                <div class="qr-code">
+                    <img src="{{ $qrCode }}" alt="QR Code for Two-Factor Authentication" style="width: 240px; height: 240px;">
+                </div>
+                <p style="font-size: 12px; margin-top: 10px; text-align: center;">Can't scan? Enter this secret key manually:</p>
                 <div class="secret-display">{{ $secret }}</div>
-                <p style="font-size: 12px; margin-top: 10px;">If you can't scan, manually enter this secret key in your authenticator app.</p>
             </div>
         </div>
 
