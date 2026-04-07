@@ -56,6 +56,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::post('/api/sensor', function(Request $request){
     $data = $request->only(['sensor','green','yellow','red']);
     cache()->put('latest_sensor', $data, 60); // store latest reading 60s
+    
+    // Store in water_depth_records
+    $today = now()->format('Y-m-d');
+    $existingRecord = \App\Models\WaterDepthRecord::where('date', $today)->first();
+    
+    if ($existingRecord) {
+        $existingRecord->update([
+            'water_level' => $data['sensor'] ?? 0,
+            'maximum_24h' => max($existingRecord->maximum_24h ?? 0, $data['sensor'] ?? 0),
+        ]);
+    } else {
+        \App\Models\WaterDepthRecord::create([
+            'water_level' => $data['sensor'] ?? 0,
+            'date' => $today,
+            'maximum_24h' => $data['sensor'] ?? 0,
+        ]);
+    }
+    
     return response()->json(['status'=>'ok']);
 })->withoutMiddleware([VerifyCsrfToken::class]);
 
@@ -65,3 +83,24 @@ Route::get('/api/latest-sensor', function(){
         cache('latest_sensor', ['sensor'=>0,'green'=>0,'yellow'=>0,'red'=>0])
     );
 });
+
+// Get daily records API
+Route::get('/api/daily-records', function(Request $request){
+    $startDate = $request->query('start_date', now()->subDays(7)->format('Y-m-d'));
+    $endDate = $request->query('end_date', now()->format('Y-m-d'));
+    
+    $records = \App\Models\WaterDepthRecord::getByDateRange($startDate, $endDate);
+    
+    return response()->json($records);
+});
+
+// Get user notifications
+Route::get('/api/notifications', function(Request $request){
+    if (!auth()->check()) {
+        return response()->json(['notifications' => []]);
+    }
+    
+    $notifications = \App\Models\Notification::getUnreadForUser(auth()->id());
+    
+    return response()->json(['notifications' => $notifications]);
+})->middleware('auth');

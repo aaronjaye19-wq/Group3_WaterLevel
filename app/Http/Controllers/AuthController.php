@@ -7,6 +7,7 @@ use App\Models\EmailVerificationToken;
 use App\Models\PasswordResetTokenDetail;
 use App\Models\MfaVerificationToken;
 use App\Models\UserMfaSetting;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -107,6 +108,8 @@ class AuthController extends Controller
 
         // Normal login without MFA
         Auth::login($user);
+        // Create login notification
+        Notification::createLoginNotification($user->id);
         return redirect($user->is_admin ? route('admin.dashboard') : route('dashboard'))->with('success', 'Login successful!');
     }
 
@@ -219,6 +222,8 @@ class AuthController extends Controller
 
         // Log the user in
         Auth::login($user);
+        // Create login notification
+        Notification::createLoginNotification($user->id);
 
         return redirect($user->is_admin ? route('admin.dashboard') : route('dashboard'))->with('success', 'Login successful!');
     }
