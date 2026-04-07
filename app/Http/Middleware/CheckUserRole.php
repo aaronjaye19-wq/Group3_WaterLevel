@@ -20,9 +20,9 @@ class CheckUserRole
             return redirect('/login');
         }
 
-        // If user is admin, they should not access user dashboard
+        // If user is admin, they should not access user dashboard - return 403
         if (auth()->user()->is_admin) {
-            return redirect('/admin/dashboard');
+            abort(403, 'Unauthorized access. Admins cannot access the user dashboard.');
         }
 
         return $next($request);

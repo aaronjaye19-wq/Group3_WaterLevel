@@ -20,9 +20,9 @@ class CheckAdminRole
             return redirect('/login');
         }
 
-        // If user is not admin, return 404 (makes it seem like route doesn't exist)
+        // If user is not admin, return 403 Forbidden
         if (!auth()->user()->is_admin) {
-            abort(404);
+            abort(403, 'Unauthorized access. You do not have permission to access the admin dashboard.');
         }
 
         return $next($request);
