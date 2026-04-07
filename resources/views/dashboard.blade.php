@@ -4,6 +4,44 @@
 <meta charset="UTF-8">
 <title>Water Sensor Dashboard</title>
 <style>
+    .navbar {
+        background-color: #000;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    .navbar h2 { margin: 0; }
+    .navbar .nav-links {
+        display: flex;
+        gap: 15px;
+    }
+    .navbar .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    .navbar .nav-links a:hover {
+        background-color: #222;
+    }
+    .navbar .logout-btn {
+        background-color: #666;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .navbar .logout-btn:hover { background-color: #444; }
+
     body {
         font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
         background: #f0f2f5;
@@ -177,7 +215,16 @@
 </head>
 <body>
 
-<h1>💧 Water Sensor Dashboard</h1>
+<div class="navbar">
+    <h2>💧 Water Sensor Dashboard</h2>
+    <div class="nav-links">
+        <a href="{{ route('mfa.setup') }}">{{ auth()->user()->mfa_enabled ? '🔒 MFA Enabled' : '⚠️ Enable MFA' }}</a>
+        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+            @csrf
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</div>
 
 <div class="dashboard-container">
     <div class="label-group">

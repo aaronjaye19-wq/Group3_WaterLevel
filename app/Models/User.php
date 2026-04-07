@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_verified',
+        'is_admin',
+        'mfa_enabled',
     ];
 
     /**
@@ -43,6 +46,29 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_verified' => 'boolean',
+            'is_admin' => 'boolean',
+            'mfa_enabled' => 'boolean',
         ];
+    }
+
+    public function emailVerificationTokens()
+    {
+        return $this->hasMany(EmailVerificationToken::class);
+    }
+
+    public function passwordResetTokens()
+    {
+        return $this->hasMany(PasswordResetTokenDetail::class);
+    }
+
+    public function mfaSetting()
+    {
+        return $this->hasOne(UserMfaSetting::class);
+    }
+
+    public function mfaVerificationTokens()
+    {
+        return $this->hasMany(MfaVerificationToken::class);
     }
 }
