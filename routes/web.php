@@ -35,8 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/mfa/disable', [AuthController::class, 'disableMfa'])->name('mfa.disable');
 });
 
-// Dashboard page (Protected)
-Route::view('/dashboard', 'dashboard')->middleware('auth')->name('dashboard');
+// Dashboard page (Protected - Users only)
+Route::view('/dashboard', 'dashboard')->middleware(['auth', 'user'])->name('dashboard');
 
 // Admin Routes
 Route::middleware(['auth', 'admin'])->group(function () {
