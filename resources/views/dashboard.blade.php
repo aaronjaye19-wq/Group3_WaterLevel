@@ -589,12 +589,6 @@
         Water Sensor Dashboard
     </h2>
     <div class="nav-links">
-        <a href="{{ route('mfa.setup') }}">
-            <svg style="width: 16px; height: 16px; display: inline; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-            </svg>
-            {{ auth()->user()->mfa_enabled ? 'MFA Enabled' : 'Enable MFA' }}
-        </a>
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="logout-btn">Logout</button>

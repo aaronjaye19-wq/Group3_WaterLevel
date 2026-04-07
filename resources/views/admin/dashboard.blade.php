@@ -373,10 +373,6 @@
                 <div class="number">{{ $verifiedUsers }}</div>
             </div>
             <div class="stat-card">
-                <h3>MFA Enabled</h3>
-                <div class="number">{{ $mfaUsers }}</div>
-            </div>
-            <div class="stat-card">
                 <h3>Admins</h3>
                 <div class="number">{{ $adminUsers }}</div>
             </div>
@@ -388,7 +384,7 @@
                 <a href="{{ route('admin.users') }}" class="link-btn">Manage Users</a>
             </p>
             <p class="desc-text">
-                View and manage all users in the system. Toggle admin privileges, disable MFA, or remove users from the platform. Maintain complete control over user access and permissions.
+                View and manage all users in the system. Toggle admin privileges or remove users from the platform. Maintain complete control over user access and permissions.
             </p>
         </div>
     </div>
