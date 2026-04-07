@@ -39,6 +39,111 @@
         font-size: 22px;
         font-weight: 600;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .navbar-icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Top Right Alerts */
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 400px;
+    }
+
+    .alert-notification {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        border-left: 4px solid;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-notification.success {
+        border-left-color: #27ae60;
+        background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+    }
+
+    .alert-notification.error {
+        border-left-color: #e74c3c;
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    }
+
+    .alert-notification.success .alert-icon {
+        color: #27ae60;
+    }
+
+    .alert-notification.error .alert-icon {
+        color: #e74c3c;
+    }
+
+    .alert-icon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .alert-message {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .alert-notification.success .alert-message {
+        color: #1b5e20;
+    }
+
+    .alert-notification.error .alert-message {
+        color: #c0392b;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s;
+    }
+
+    .alert-close:hover {
+        color: #333;
     }
 
     .navbar .nav-links {
@@ -474,10 +579,22 @@
 </head>
 <body>
 
+<div class="alert-container" id="alertContainer"></div>
+
 <div class="navbar">
-    <h2>💧 Water Sensor Dashboard</h2>
+    <h2>
+        <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/>
+        </svg>
+        Water Sensor Dashboard
+    </h2>
     <div class="nav-links">
-        <a href="{{ route('mfa.setup') }}">{{ auth()->user()->mfa_enabled ? '🔒 MFA Enabled' : '⚠️ Enable MFA' }}</a>
+        <a href="{{ route('mfa.setup') }}">
+            <svg style="width: 16px; height: 16px; display: inline; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            {{ auth()->user()->mfa_enabled ? 'MFA Enabled' : 'Enable MFA' }}
+        </a>
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="logout-btn">Logout</button>
@@ -643,6 +760,42 @@ async function loadChartData() {
         console.error("Error loading chart data:", err);
     }
 }
+
+// Alert notification system
+function showAlert(message, type = 'success') {
+    const container = document.getElementById('alertContainer');
+    const alert = document.createElement('div');
+    alert.className = `alert-notification ${type}`;
+    
+    const iconSvg = type === 'success' 
+        ? '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>'
+        : '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+    
+    alert.innerHTML = `
+        ${iconSvg}
+        <span class="alert-message">${message}</span>
+        <button class="alert-close" onclick="this.parentElement.style.display='none';">×</button>
+    `;
+    
+    container.appendChild(alert);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (alert.parentElement) {
+            alert.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Check for session messages
+@if (session('success'))
+    showAlert("{{ session('success') }}", 'success');
+@endif
+
+@if (session('error'))
+    showAlert("{{ session('error') }}", 'error');
+@endif
 
 setInterval(fetchData, 1000);
 loadChartData();

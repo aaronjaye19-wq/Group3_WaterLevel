@@ -250,26 +250,108 @@
             transform: none;
             box-shadow: none;
         }
+
+        /* Top Right Alerts */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert-notification {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-left: 4px solid;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-notification.success {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+        }
+
+        .alert-notification.error {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        }
+
+        .alert-notification.success .alert-icon {
+            color: #27ae60;
+        }
+
+        .alert-notification.error .alert-icon {
+            color: #e74c3c;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .alert-notification.success .alert-message {
+            color: #1b5e20;
+        }
+
+        .alert-notification.error .alert-message {
+            color: #c0392b;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .alert-close:hover {
+            color: #333;
+        }
     </style>
 </head>
 <body>
+    <div class="alert-container" id="alertContainer"></div>
+
     <div class="container">
-        <h1>🔐 Login</h1>
+        <h1>Login</h1>
         <p class="subtitle">Access your water sensor dashboard</p>
-
-        @if (session('success'))
-            <div class="success">{{ session('success') }}</div>
-        @endif
-
-        @if ($errors->any())
-            <div class="errors">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         <form action="{{ route('login') }}" method="POST">
             @csrf
@@ -304,5 +386,45 @@
             <p>Don't have an account? <a href="{{ route('register') }}">Sign up now</a></p>
         </div>
     </div>
+
+    <script>
+        // Alert notification system
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert-notification ${type}`;
+            
+            const iconSvg = type === 'success' 
+                ? '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>'
+                : '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+            
+            alert.innerHTML = `
+                ${iconSvg}
+                <span class="alert-message">${message}</span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none';">×</button>
+            `;
+            
+            container.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Check for session messages
+        @if (session('success'))
+            showAlert("{{ session('success') }}", 'success');
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                showAlert("{{ $error }}", 'error');
+            @endforeach
+        @endif
+    </script>
 </body>
 </html>

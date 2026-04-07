@@ -34,6 +34,111 @@
             font-size: 24px;
             font-weight: 700;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Top Right Alerts */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert-notification {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-left: 4px solid;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-notification.success {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+        }
+
+        .alert-notification.error {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        }
+
+        .alert-notification.success .alert-icon {
+            color: #27ae60;
+        }
+
+        .alert-notification.error .alert-icon {
+            color: #e74c3c;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-message {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .alert-notification.success .alert-message {
+            color: #1b5e20;
+        }
+
+        .alert-notification.error .alert-message {
+            color: #c0392b;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .alert-close:hover {
+            color: #333;
         }
 
         .navbar .logout-btn {
@@ -274,8 +379,15 @@
     </style>
 </head>
 <body>
+    <div class="alert-container" id="alertContainer"></div>
+
     <div class="navbar">
-        <h2>👥 User Management</h2>
+        <h2>
+            <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            User Management
+        </h2>
         <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="logout-btn">Logout</button>
@@ -287,18 +399,6 @@
             <h1>Manage Users</h1>
             <a href="{{ route('admin.dashboard') }}" class="back-link">← Back to Dashboard</a>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success">
-                ✅ {{ session('success') }}
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-error">
-                ❌ {{ session('error') }}
-            </div>
-        @endif
 
         <div class="section">
             <table class="table">
@@ -319,21 +419,21 @@
                             <td>{{ $user->email }}</td>
                             <td>
                                 @if ($user->is_verified)
-                                    <span class="badge badge-verified">✓ Verified</span>
+                                    <span class="badge badge-verified">Verified</span>
                                 @else
                                     <span style="color: #999; font-size: 12px; text-transform: uppercase;">Not Verified</span>
                                 @endif
                             </td>
                             <td>
                                 @if ($user->is_admin)
-                                    <span class="badge badge-admin">⚙️ Admin</span>
+                                    <span class="badge badge-admin">Admin</span>
                                 @else
                                     <span style="color: #999; font-size: 12px; text-transform: uppercase;">User</span>
                                 @endif
                             </td>
                             <td>
                                 @if ($user->mfa_enabled)
-                                    <span class="badge badge-mfa">🔒 Enabled</span>
+                                    <span class="badge badge-mfa">Enabled</span>
                                 @else
                                     <span style="color: #999; font-size: 12px; text-transform: uppercase;">Disabled</span>
                                 @endif
@@ -399,5 +499,43 @@
             @endif
         </div>
     </div>
+
+    <script>
+        // Alert notification system
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert-notification ${type}`;
+            
+            const iconSvg = type === 'success' 
+                ? '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>'
+                : '<svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+            
+            alert.innerHTML = `
+                ${iconSvg}
+                <span class="alert-message">${message}</span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none';">×</button>
+            `;
+            
+            container.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Check for session messages
+        @if (session('success'))
+            showAlert("{{ session('success') }}", 'success');
+        @endif
+
+        @if (session('error'))
+            showAlert("{{ session('error') }}", 'error');
+        @endif
+    </script>
 </body>
 </html>
