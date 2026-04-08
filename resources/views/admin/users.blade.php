@@ -408,7 +408,6 @@
                         <th>Email</th>
                         <th>Status</th>
                         <th>Admin</th>
-                        <th>MFA</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -432,13 +431,6 @@
                                 @endif
                             </td>
                             <td>
-                                @if ($user->mfa_enabled)
-                                    <span class="badge badge-mfa">Enabled</span>
-                                @else
-                                    <span style="color: #999; font-size: 12px; text-transform: uppercase;">Disabled</span>
-                                @endif
-                            </td>
-                            <td>
                                 <div class="actions">
                                     <form action="{{ route('admin.toggle-admin', $user->id) }}" method="POST" style="display: inline;">
                                         @csrf
@@ -446,13 +438,6 @@
                                             {{ $user->is_admin ? 'Revoke Admin' : 'Grant Admin' }}
                                         </button>
                                     </form>
-
-                                    @if ($user->mfa_enabled)
-                                        <form action="{{ route('admin.disable-mfa', $user->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <button type="submit" class="action-btn">Disable MFA</button>
-                                        </form>
-                                    @endif
 
                                     @if ($user->id !== auth()->id())
                                         <form action="{{ route('admin.delete-user', $user->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">

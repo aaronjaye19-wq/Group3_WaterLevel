@@ -16,14 +16,12 @@ class AdminController extends Controller
         $users = User::all();
         $totalUsers = User::count();
         $verifiedUsers = User::where('is_verified', true)->count();
-        $mfaUsers = User::where('mfa_enabled', true)->count();
         $adminUsers = User::where('is_admin', true)->count();
 
         return view('admin.dashboard', [
             'users' => $users,
             'totalUsers' => $totalUsers,
             'verifiedUsers' => $verifiedUsers,
-            'mfaUsers' => $mfaUsers,
             'adminUsers' => $adminUsers,
         ]);
     }
@@ -53,18 +51,6 @@ class AdminController extends Controller
         
         $action = $user->is_admin ? 'granted' : 'revoked';
         return redirect()->back()->with('success', "Admin status {$action} for {$user->name}");
-    }
-
-    /**
-     * Disable MFA for a user
-     */
-    public function disableMfa($userId)
-    {
-        $user = User::findOrFail($userId);
-        $user->update(['mfa_enabled' => false]);
-        $user->mfaSetting()->update(['is_enabled' => false]);
-
-        return redirect()->back()->with('success', "MFA disabled for {$user->name}");
     }
 
     /**

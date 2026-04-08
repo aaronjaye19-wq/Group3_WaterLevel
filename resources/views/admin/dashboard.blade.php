@@ -373,10 +373,6 @@
                 <div class="number">{{ $verifiedUsers }}</div>
             </div>
             <div class="stat-card">
-                <h3>MFA Enabled</h3>
-                <div class="number">{{ $mfaUsers }}</div>
-            </div>
-            <div class="stat-card">
                 <h3>Admins</h3>
                 <div class="number">{{ $adminUsers }}</div>
             </div>
