@@ -40,17 +40,18 @@
         }
 
         .navbar-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
+            fill: currentColor;
         }
 
         /* Top Right Alerts */
         .alert-container {
             position: fixed;
-            top: 20px;
+            top: 90px;
             right: 20px;
             z-index: 1000;
             max-width: 400px;
@@ -346,8 +347,8 @@
 
     <div class="navbar">
         <h2>
-            <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/><path d="M8.56 2.75c4.37 6.03 6.29 9.42 8.07 17.72m2.54-15.6c3.72 4.35 5.91 7 8.07 17.72M9.86 4.07c2.74 4.46 5.24 7.9 6.14 16.53m5.26-15.93c2.2 4.8 4.6 7.81 6.14 16.53"/>
+            <svg class="navbar-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zM10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
             </svg>
             Admin Dashboard
         </h2>

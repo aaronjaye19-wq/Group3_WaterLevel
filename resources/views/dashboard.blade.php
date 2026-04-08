@@ -45,17 +45,26 @@
     }
 
     .navbar-icon {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
+        fill: currentColor;
+    }
+
+    .nav-icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 6px;
     }
 
     /* Top Right Alerts */
     .alert-container {
         position: fixed;
-        top: 20px;
+        top: 90px;
         right: 20px;
         z-index: 1000;
         max-width: 400px;
@@ -583,15 +592,15 @@
 
 <div class="navbar">
     <h2>
-        <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/>
+        <svg class="navbar-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
         </svg>
         Water Sensor Dashboard
     </h2>
     <div class="nav-links">
         <a href="{{ route('mfa.setup') }}">
-            <svg style="width: 16px; height: 16px; display: inline; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
             </svg>
             {{ auth()->user()->mfa_enabled ? 'MFA Enabled' : 'Enable MFA' }}
         </a>
