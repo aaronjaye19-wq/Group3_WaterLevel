@@ -48,7 +48,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'userManagement'])->name('admin.users');
     Route::post('/admin/users/{id}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('admin.toggle-admin');
-    Route::post('/admin/users/{id}/disable-mfa', [AdminController::class, 'disableMfa'])->name('admin.disable-mfa');
     Route::post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('admin.delete-user');
 });
 
